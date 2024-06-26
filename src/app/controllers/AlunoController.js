@@ -1,73 +1,42 @@
 import Aluno from "../models/Aluno.js";
 import Matricula from "../models/Matricula.js";
 
-const cursos = [
-  {
-    id: 1,
-    curso: "Engenharia Civil",
-    mensalidade: 1500.0,
-    vencimento_mensalidade: "2024-07-10",
-  },
-  {
-    id: 2,
-    curso: "Direito",
-    mensalidade: 1800.0,
-    vencimento_mensalidade: "2024-07-10",
-  },
-  {
-    id: 3,
-    curso: "Administração",
-    mensalidade: 1200.0,
-    vencimento_mensalidade: "2024-07-10",
-  },
-  {
-    id: 4,
-    curso: "Ciência da Computação",
-    mensalidade: 2000.0,
-    vencimento_mensalidade: "2024-07-10",
-  },
-  {
-    id: 5,
-    curso: "Medicina",
-    mensalidade: 3500.0,
-    vencimento_mensalidade: "2024-07-10",
-  },
-  {
-    id: 6,
-    curso: "Psicologia",
-    mensalidade: 1600.0,
-    vencimento_mensalidade: "2024-07-10",
-  },
-  {
-    id: 7,
-    curso: "Economia",
-    mensalidade: 1400.0,
-    vencimento_mensalidade: "2024-07-10",
-  },
-  {
-    id: 8,
-    curso: "Enfermagem",
-    mensalidade: 1800.0,
-    vencimento_mensalidade: "2024-07-10",
-  },
-  {
-    id: 9,
-    curso: "Arquitetura",
-    mensalidade: 1900.0,
-    vencimento_mensalidade: "2024-07-10",
-  },
-  {
-    id: 10,
-    curso: "Odontologia",
-    mensalidade: 2500.0,
-    vencimento_mensalidade: "2024-07-10",
-  },
-];
-
 class AlunoController {
-  async todosAlunos() {}
+  async todosAlunos(req, res) {
+    const alunos = await Aluno.findAll();
+    const matriculas = await Matricula.findAll();
 
-  async alunoPorId() {}
+    let result = [];
+
+    alunos.forEach((aluno) => {
+      let matricul = matriculas.find(
+        (matricula) => matricula.userId == aluno.id
+      );
+
+      if (matricul) {
+        result.push({
+          id: aluno.id,
+          nome: aluno.nome,
+          data_nasc: aluno.data_nasc,
+          email: aluno.email,
+          curso: matricul.curso,
+          valor_mensal: matricul.valor_mensal,
+          pag_atrasado: matricul.pag_atrasado,
+        });
+      }
+    });
+
+    res.status(200).json(result);
+  }
+
+  async alunoPorId(req, res) {
+    const id = req.params.id;
+    const aluno = await Aluno.findOne({
+      where: { id: id },
+    });
+
+    res.status(200).json(aluno);
+  }
 
   async addAluno(req, res) {
     const aluno = await Aluno.create(req.body);
