@@ -9,6 +9,7 @@ const Matricula = sequelize.define("Matricula", {
     allowNull: false,
     primaryKey: true,
   },
+  
   curso: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -19,11 +20,6 @@ const Matricula = sequelize.define("Matricula", {
     allowNull: false,
   },
   
-  pag_atrasado: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-  },
-
   userId: {
     type: DataTypes.INTEGER,
     references: {

@@ -8,16 +8,19 @@ const Aluno = sequelize.define("Aluno", {
     allowNull: false,
     primaryKey: true,
   },
+
   nome: {
     type: DataTypes.STRING,
     allowNull: false,
     required: true,
   },
+
   data_nasc: {
     type: DataTypes.DATE,
     allowNull: false,
     required: true,
   },
+  
   email: {
     type: DataTypes.STRING,
     allowNull: false,
