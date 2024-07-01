@@ -9,17 +9,28 @@ const Matricula = sequelize.define("Matricula", {
     allowNull: false,
     primaryKey: true,
   },
-  
+
+  data_matricula: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW,
+  },
+
   curso: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+
+  curso_concluido: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
   },
 
   valor_mensal: {
     type: DataTypes.FLOAT,
     allowNull: false,
   },
-  
+
   userId: {
     type: DataTypes.INTEGER,
     references: {

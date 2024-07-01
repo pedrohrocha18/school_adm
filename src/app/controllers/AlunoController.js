@@ -1,5 +1,6 @@
 import Aluno from "../models/Aluno.js";
 import Matricula from "../models/Matricula.js";
+import Notas from "../models/Notas.js";
 
 class AlunoController {
   async todosAlunos(req, res) {
@@ -20,7 +21,9 @@ class AlunoController {
             data_nasc: aluno.data_nasc,
             email: aluno.email,
             curso: matricul.curso,
+            data_matricula: matricul.data_matricula,
             valor_mensal: matricul.valor_mensal,
+            curso_concluido: matricul.curso_concluido,
           });
         }
       });
@@ -44,14 +47,28 @@ class AlunoController {
         where: { userId: id },
       });
 
+      const notasSearch = await Notas.findAll({
+        where: { userId: id },
+      });
+
+      const notas = {
+        Português: notasSearch[0].dataValues.portugues,
+        Inglês: notasSearch[0].dataValues.ingles,
+        Matemática: notasSearch[0].dataValues.matematica,
+        História: notasSearch[0].dataValues.historia,
+        Física: notasSearch[0].dataValues.fisica,
+        Química: notasSearch[0].dataValues.quimica,
+      };
+
       const result = {
-        id: alunoSearch.id,
+        aluno_id: alunoSearch.id,
         nome: alunoSearch.nome,
         data_nasc: alunoSearch.data_nasc,
         email: alunoSearch.email,
-        matricula_id: matriculasSearch.id,
         curso: matriculasSearch.curso,
         valor_mensal: matriculasSearch.valor_mensal,
+        curso_concluido: matriculasSearch.curso_concluido,
+        notas,
       };
 
       res.status(200).json(result);
@@ -71,12 +88,14 @@ class AlunoController {
         userId: aluno.id,
       });
 
+      await Notas.create({
+        userId: matricula.userId,
+      });
+
       const alunoAdicionado = {
-        id: aluno.id,
         nome: aluno.nome,
         data_nasc: aluno.data_nasc,
         email: aluno.email,
-        matricula_id: matricula.id,
         curso: matricula.curso,
         valor_mensal: matricula.valor_mensal,
       };
@@ -89,33 +108,29 @@ class AlunoController {
     }
   }
 
-  async deleteAluno(req, res) {}
+  async deleteAluno(req, res) {
+    const id = req.params.id;
 
-  // async updateAluno(req, res) {
-  //   try {
-  //     const idParams = req.params.id;
-  //     const alunoUpdate = req.body;
+    const alunoSearch = await Aluno.findOne({ where: { id: id } });
 
-  //     const aluno = await Aluno.update(
-  //       {
-  //         nome: alunoUpdate.nome,
-  //         data_nasc: alunoUpdate.data_nasc,
-  //         email: alunoUpdate.email,
-  //       },
-  //       { where: { id: idParams } }
-  //     );
+    try {
+      if (alunoSearch) {
+        await Aluno.destroy({ where: { id: alunoSearch.id } });
+        await Matricula.destroy({
+          where: { userId: alunoSearch.id },
+        });
+        await Notas.destroy({
+          where: { userId: alunoSearch.id },
+        });
 
-  //     const alunoSearch = await Aluno.findOne({ where: { id: idParams } });
-
-  //     if (alunoSearch == null) {
-  //       res.status(404).json({ error: "Dados não localizados!" });
-  //     } else {
-  //       res.status(200).json({ "Aluno atualizado": alunoSearch });
-  //     }
-  //   } catch (error) {
-  //     res.status(404).json({ error: "Dados não localizados!" });
-  //   }
-  // }
+        res.status(200).json({ sucess: "Aluno deletado!" });
+      } else {
+        res.status(404).json({ error: "Dados não localizados!" });
+      }
+    } catch (error) {
+      res.status(404).json({ error: "Dados não localizados!" });
+    }
+  }
 }
 
 export default new AlunoController();
