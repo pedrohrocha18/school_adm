@@ -11,7 +11,7 @@ const Matricula = sequelize.define("Matricula", {
   },
 
   data_matricula: {
-    type: DataTypes.DATE,
+    type: DataTypes.DATEONLY,
     allowNull: false,
     defaultValue: DataTypes.NOW,
   },

@@ -5,29 +5,24 @@ import Notas from "../models/Notas.js";
 class AlunoController {
   async todosAlunos(req, res) {
     try {
-      let result = [];
+      const result = [];
       const alunos = await Aluno.findAll();
       const matriculas = await Matricula.findAll();
 
       alunos.forEach((aluno) => {
-        let matricul = matriculas.find(
+        const findMatric = matriculas.find(
           (matricula) => matricula.userId == aluno.id
         );
 
-        if (matricul) {
+        if (findMatric) {
           result.push({
-            id: aluno.id,
+            aluno_id: aluno.id,
             nome: aluno.nome,
             data_nasc: aluno.data_nasc,
-            email: aluno.email,
-            curso: matricul.curso,
-            data_matricula: matricul.data_matricula,
-            valor_mensal: matricul.valor_mensal,
-            curso_concluido: matricul.curso_concluido,
+            curso: findMatric.curso,
           });
         }
       });
-
       if (result.length == 0) {
         res.status(404).json({ error: "Dados não localizados!" });
       } else {
@@ -40,7 +35,7 @@ class AlunoController {
 
   async alunoPorId(req, res) {
     const id = req.params.id;
-
+    
     try {
       const alunoSearch = await Aluno.findOne({ where: { id: id } });
       const matriculasSearch = await Matricula.findOne({

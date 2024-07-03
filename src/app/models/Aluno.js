@@ -16,7 +16,7 @@ const Aluno = sequelize.define("Aluno", {
   },
 
   data_nasc: {
-    type: DataTypes.DATE,
+    type: DataTypes.DATEONLY,
     allowNull: false,
     required: true,
   },
